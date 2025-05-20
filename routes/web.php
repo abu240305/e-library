@@ -22,7 +22,7 @@ use App\Http\Controllers\AuthController;
 
 Route::get('/register',[AuthController::class,'register'])->name('register');
 Route::post('/prosesRegister',[AuthController::class,'prosesRegister']);
-Route::get('/',[AuthController::class,'index'])->name('login');
+Route::get('/login',[AuthController::class,'index'])->name('login');
 Route::post('/prosesLogin',[AuthController::class,'prosesLogin']);
 Route::get('/logout',[AuthController::class,'logout']);
 
@@ -38,14 +38,16 @@ Route::group(['middleware' => ['auth', 'cek_login:admin']], function () {
     Route::post('/admin/buku/prosesEdit', [AdminController::class,'prosesEdit']);
     Route::get('/admin/anggota', [AdminController::class,'anggota']);
     Route::get('/admin/peminjaman', [AdminController::class,'peminjaman']);
+    Route::get('/admin/peminjaman/cetak',[AdminController::class,'cetakpeminjaman'])->name('cetak.peminjaman');
     Route::get('/admin/pengembalian', [AdminController::class,'pengembalian']);
+    Route::get('/admin/pengembalian/cetak',[AdminController::class,'cetakPengembalian'])->name('cetak.pengembalian');
     Route::get('/admin/ulasan', [AdminController::class,'ulasan']);
+    Route::get('/admin/ulasan/cetak',[AdminController::class,'cetakulasan'])->name('cetak.ulasan');
 });
 
 // USER ROUTE GROUP
 Route::group(['middleware' => ['auth', 'cek_login:user']], function () {
-    Route::get('/home',[UserController::class,'index']);
-    Route::get('/detail/{id}',[UserController::class,'detail'])->name('detail');
+    
     Route::get('/peminjaman/daftar', [UserController::class, 'daftarBukuDipinjam'])->name('peminjaman.daftar');
     Route::post('/peminjaman/{bukuId}',[UserController::class,'peminjaman'])->name('peminjaman');
     Route::get('/pengembalian',[UserController::class,'pengembalian']);
@@ -57,7 +59,8 @@ Route::group(['middleware' => ['auth', 'cek_login:user']], function () {
     Route::get('/buku/{hashedId}/baca', [UserController::class, 'baca'])->name('baca');
 
 });
-
+Route::get('/',[UserController::class,'index']);
+Route::get('/detail/{id}',[UserController::class,'detail'])->name('detail');
 // Route::get('/cek-imagick', function () {
 //     return extension_loaded('imagick') ? 'Imagick aktif!' : 'Imagick TIDAK aktif!';
 // });

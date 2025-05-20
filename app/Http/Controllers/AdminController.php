@@ -10,6 +10,7 @@ use App\Models\pengembalian;
 use App\Models\ulasan;
 use App\Models\User;
 use App\Models\peminjamen;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class AdminController extends Controller
@@ -117,15 +118,141 @@ class AdminController extends Controller
         $dtpeminjaman=peminjaman::all();
         return view('admin.peminjaman.index',compact('dtpeminjaman'));
     }
+    public function cetakPeminjaman(Request $request){
+        $periode = $request->input('periode');
+        $peminjamanQuery = peminjaman::query();
+
+        $tanggalAwal = now();
+        $tanggalAkhir = now();
+        $pdfName = "";
+
+        switch ($periode) {
+            case 'hari':
+                $tanggalAwal = now();
+                $tanggalAkhir = now();
+                $peminjamanQuery->whereDate('tanggal_pinjam', now());
+                $pdfName = $tanggalAwal->format('d-m-Y');
+                break;
+            case 'minggu':
+                $tanggalAwal = now()->startOfWeek();
+                $tanggalAkhir = now()->endOfWeek();
+                $peminjamanQuery->whereBetween('tanggal_pinjam', [$tanggalAwal, $tanggalAkhir]);
+                $pdfName = $tanggalAwal->format('d-m-Y') . " - " . $tanggalAkhir->format('d-m-Y');
+                break;
+            case 'bulan':
+                $tanggalAwal = now()->startOfMonth();
+                $tanggalAkhir = now()->endOfMonth();
+                $peminjamanQuery->whereMonth('tanggal_pinjam', now()->month)->whereYear('tanggal_pinjam', now()->year);
+                $pdfName = $tanggalAwal->format('F Y') . ", " . $tanggalAwal->format('d-m-Y') . " - " . $tanggalAkhir->format('d-m-Y');
+                break;
+            case 'tahun':
+                $tanggalAwal = now()->startOfYear();
+                $tanggalAkhir = now()->endOfYear();
+                $peminjamanQuery->whereYear('tanggal_pinjam', now()->year);
+                $pdfName = $tanggalAwal->format('Y') . ", " . $tanggalAwal->format('d-m-Y') . " - " . $tanggalAkhir->format('d-m-Y');
+                break;
+            default:
+                break;
+        }
+
+        $dtPeminjaman = $peminjamanQuery->get();
+
+        $pdf = Pdf::loadView('admin.peminjaman.cetak', compact('dtPeminjaman', 'periode', 'tanggalAwal', 'tanggalAkhir'));
+        return $pdf->download("Laporan Data Pembayaran " . $pdfName . ".pdf");
+    }
 
     public function pengembalian(){
         $dtpengembalian=pengembalian::all();
         return view('admin.pengembalian.index',compact('dtpengembalian'));
     }
+    public function cetakPengembalian(Request $request){
+        $periode = $request->input('periode');
+        $pengembalianQuery = pengembalian::query();
+
+        $tanggalAwal = now();
+        $tanggalAkhir = now();
+        $pdfName = "";
+
+        switch ($periode) {
+            case 'hari':
+                $tanggalAwal = now();
+                $tanggalAkhir = now();
+                $pengembalianQuery->whereDate('tanggal_kembali', now());
+                $pdfName = $tanggalAwal->format('d-m-Y');
+                break;
+            case 'minggu':
+                $tanggalAwal = now()->startOfWeek();
+                $tanggalAkhir = now()->endOfWeek();
+                $pengembalianQuery->whereBetween('tanggal_kembali', [$tanggalAwal, $tanggalAkhir]);
+                $pdfName = $tanggalAwal->format('d-m-Y') . " - " . $tanggalAkhir->format('d-m-Y');
+                break;
+            case 'bulan':
+                $tanggalAwal = now()->startOfMonth();
+                $tanggalAkhir = now()->endOfMonth();
+                $pengembalianQuery->whereMonth('tanggal_kembali', now()->month)->whereYear('tanggal_kembali', now()->year);
+                $pdfName = $tanggalAwal->format('F Y') . ", " . $tanggalAwal->format('d-m-Y') . " - " . $tanggalAkhir->format('d-m-Y');
+                break;
+            case 'tahun':
+                $tanggalAwal = now()->startOfYear();
+                $tanggalAkhir = now()->endOfYear();
+                $pengembalianQuery->whereYear('tanggal_kembali', now()->year);
+                $pdfName = $tanggalAwal->format('Y') . ", " . $tanggalAwal->format('d-m-Y') . " - " . $tanggalAkhir->format('d-m-Y');
+                break;
+            default:
+                break;
+        }
+
+        $dtpengembalian = $pengembalianQuery->get();
+
+        $pdf = Pdf::loadView('admin.pengembalian.cetak', compact('dtpengembalian', 'periode', 'tanggalAwal', 'tanggalAkhir'));
+        return $pdf->download("Laporan Data Pembayaran " . $pdfName . ".pdf");
+    }
 
     public function ulasan(){
         $dtulasan=ulasan::all();
         return view('admin.ulasan.index',compact('dtulasan'));
+    }
+    public function cetakulasan(Request $request){
+        $periode = $request->input('periode');
+        $ulasanQuery = ulasan::query();
+
+        $tanggalAwal = now();
+        $tanggalAkhir = now();
+        $pdfName = "";
+
+        switch ($periode) {
+            case 'hari':
+                $tanggalAwal = now();
+                $tanggalAkhir = now();
+                $ulasanQuery->whereDate('tanggal_ulasan', now());
+                $pdfName = $tanggalAwal->format('d-m-Y');
+                break;
+            case 'minggu':
+                $tanggalAwal = now()->startOfWeek();
+                $tanggalAkhir = now()->endOfWeek();
+                $ulasanQuery->whereBetween('tanggal_ulasan', [$tanggalAwal, $tanggalAkhir]);
+                $pdfName = $tanggalAwal->format('d-m-Y') . " - " . $tanggalAkhir->format('d-m-Y');
+                break;
+            case 'bulan':
+                $tanggalAwal = now()->startOfMonth();
+                $tanggalAkhir = now()->endOfMonth();
+                $ulasanQuery->whereMonth('tanggal_ulasan', now()->month)->whereYear('tanggal_ulasan', now()->year);
+                $pdfName = $tanggalAwal->format('F Y') . ", " . $tanggalAwal->format('d-m-Y') . " - " . $tanggalAkhir->format('d-m-Y');
+                break;
+            case 'tahun':
+                $tanggalAwal = now()->startOfYear();
+                $tanggalAkhir = now()->endOfYear();
+                $ulasanQuery->whereYear('tanggal_ulasan', now()->year);
+                $pdfName = $tanggalAwal->format('Y') . ", " . $tanggalAwal->format('d-m-Y') . " - " . $tanggalAkhir->format('d-m-Y');
+                break;
+            default:
+                break;
+        }
+
+        $dtulasan = $ulasanQuery->get();
+
+        $pdf = Pdf::loadView('admin.ulasan.cetak', compact('dtulasan', 'periode', 'tanggalAwal', 'tanggalAkhir'));
+        return $pdf->download("Laporan Data Pembayaran " . $pdfName . ".pdf");
     }
 
 }

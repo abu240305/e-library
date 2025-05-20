@@ -18,7 +18,7 @@ class Cek_login
     {
         // Cek apakah user sudah login, jika belum kembali ke halaman login
         if (!Auth::check()) {
-            return redirect('/')->with('error', 'Silakan login terlebih dahulu.');
+            return redirect('login')->with('error', 'Silakan login terlebih dahulu.');
         }
     
         // Ambil data user yang sedang login
@@ -31,6 +31,6 @@ class Cek_login
     
         // Jika user tidak memiliki akses (role tidak sesuai), logout dan redirect ke halaman login
         Auth::logout();
-        return redirect('/')->with('error', 'Maaf, Anda tidak memiliki akses.');
+        return redirect('login')->with('error', 'Maaf, Anda tidak memiliki akses.');
     }
 }    

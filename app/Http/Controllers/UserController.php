@@ -30,6 +30,7 @@ class UserController extends Controller
 
     public function detail($id){
         $buku = Buku::where('id',$id)->first();
+        
         return view('user.detail.index' , compact('buku'));
     }
 

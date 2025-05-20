@@ -11,6 +11,20 @@
                 <div class="card-body p-4">
                   <h5 class="card-title fw-semibold mb-4">Tebel Peminjaman</h5>
                   <div class="table-responsive">
+                    <div class="mx-3">
+                      <form action="{{route('cetak.peminjaman')}}" method="GET" target="_blank" class="row input-group">
+                          <select id="periodeSelect" class="form-control mt-1" name="periode" id="periode">
+                              <option value="hari">Perhari</option>
+                              <option value="minggu">Perminggu</option>
+                              <option value="bulan">Perbulan</option>
+                              <option value="tahun">Pertahun</option>
+                          </select>
+                          <input style="width: 30%" id="tanggalInput" name="tanggal" type="text" class="form-control mt-1" readonly>                        
+                          <div style="width: 10%" class="input-group-append">
+                              <button class="btn btn-primary mt-1" type="submit">CETAK</button>
+                          </div>
+                      </form>
+                  </div>
                     <table class="table text-nowrap mb-0 align-middle">
                       <thead class="text-dark fs-4">
                         <tr>

@@ -17,7 +17,7 @@ class AuthController extends Controller
                 return redirect()->intended('admin/dashboard');
             }
             else if($user->role =='user'){
-                return redirect()->intended('home');
+                return redirect()->intended('/');
             }
         }
         return view('from.login');
@@ -31,7 +31,7 @@ class AuthController extends Controller
     
         $user = User::where('email', $request->email)->first();
         if (!$user) {
-            return redirect('/')->withInput()->withErrors(['email' => 'Email tidak terdaftar']);
+            return redirect('login')->withInput()->withErrors(['email' => 'Email tidak terdaftar']);
         }
     
         // Lanjutkan dengan autentikasi jika user ada
@@ -43,15 +43,15 @@ class AuthController extends Controller
             if ($user->role == 'admin') {
                 return redirect()->intended('admin/dashboard');
             } elseif ($user->role == 'user') {
-                return redirect()->intended('home');
+                return redirect()->intended('/');
             }
     
             Auth::logout();
-            return redirect('/');
+            return redirect('login');
         }
     
         // Jika autentikasi gagal, password salah
-        return redirect('/')->withInput()->withErrors(['password' => 'Password salah']);
+        return redirect('login')->withInput()->withErrors(['password' => 'Password salah']);
     }
     
 
@@ -82,12 +82,7 @@ class AuthController extends Controller
 
                 $request['role']='user';
                 $request['password'] = bcrypt($request->password);
-        
-
                 User::create($request->all());
-
-
-        
                 return redirect()->route('login')
                 ->with('success','Akun berhasil dibuat, silahkan login');
 
@@ -96,6 +91,6 @@ class AuthController extends Controller
     public function logout(Request $request){
         $request->session()->flush();
         Auth::logout();
-        return Redirect('/');
+        return Redirect('login');
     }
 }

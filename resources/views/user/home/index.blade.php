@@ -16,6 +16,9 @@
         padding: 0 !important;
         overflow: hidden;
     }
+
+    /* Tambahan styling tab agar terlihat klik */
+    
 </style>
 
 <section id="popular-books" class="bookshelf py-5 my-5">
@@ -27,7 +30,6 @@
                     <h2 class="section-title">Daftar Buku</h2>
                 </div>
 
-
                 {{-- Tabs --}}
                 <ul class="tabs">
                     <li data-tab-target="#all-genre" class="active tab">All Genre</li>
@@ -38,20 +40,21 @@
                     <li data-tab-target="#fiksi" class="tab">Fiksi</li>
                 </ul>
 
-                <div class="row mb-3">
-                    <div class="col-md-4 mx-auto">
-                        <input type="text" id="search-input" class="form-control" placeholder="Cari judul atau penulis...">
-                    </div>
-                </div>
-
                 <div class="tab-content">
-                    {{-- All Genre --}}
+
+                    {{-- All Genre dengan input search di dalamnya --}}
                     <div id="all-genre" data-tab-content class="active">
+                        <div class="row mb-3" id="search-wrapper">
+                            <div class="col-md-4 mx-auto">
+                                <input type="text" id="search-input" class="form-control" placeholder="Cari judul atau penulis...">
+                            </div>
+                        </div>
+
                         <div class="row">
                             @foreach ($all as $buku)
                             <div class="col-lg-2 mb-1 book-item"
-                                data-title="{{ strtolower($buku->judul) }}"
-                                data-author="{{ strtolower($buku->penulis) }}">
+                                data-judul="{{ strtolower($buku->judul) }}"
+                                data-penulis="{{ strtolower($buku->penulis) }}">
                                 <div class="product-item text-center shadow-sm rounded p-2 bg-white h-60 book-card">
                                     <figure class="product-style mb-1">
                                         <img src="{{ asset('storage/covers/'.$buku->cover) }}" alt="{{ $buku->judul }}"
@@ -75,7 +78,7 @@
                             </div>
                             @endforeach
                         </div>
-                    </div>                                                  
+                    </div>
 
                     {{-- Genre tabs --}}
                     @foreach ($genres as $namaGenre => $daftarBuku)
@@ -118,17 +121,19 @@
 </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('search-input');
+   document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('search-input');
 
+    // pencarian, jika input ada
+    if (searchInput) {
         searchInput.addEventListener('input', function () {
             const keyword = this.value.toLowerCase();
-            const activeTab = document.querySelector('.tab-content > div.active');
-            const books = activeTab.querySelectorAll('.book-item');
+            const allGenreTab = document.getElementById('all-genre');
+            const books = allGenreTab.querySelectorAll('.book-item');
 
-            books.forEach(function (book) {
-                const title = book.getAttribute('data-title');
-                const author = book.getAttribute('data-author');
+            books.forEach(book => {
+                const title = book.getAttribute('data-judul');
+                const author = book.getAttribute('data-penulis');
 
                 if (title.includes(keyword) || author.includes(keyword)) {
                     book.classList.remove('hidden');
@@ -137,20 +142,9 @@
                 }
             });
         });
+    }
+});
 
-        const tabButtons = document.querySelectorAll('.tabs .tab');
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('[data-tab-content]').forEach(tab => tab.classList.remove('active'));
-                this.classList.add('active');
-                const target = document.querySelector(this.dataset.tabTarget);
-                target.classList.add('active');
-
-                searchInput.dispatchEvent(new Event('input'));
-            });
-        });
-    });
 </script>
 
 @endsection
