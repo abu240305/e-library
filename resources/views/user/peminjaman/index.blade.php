@@ -49,8 +49,8 @@
                                 <td> {{ $loop->iteration}}</td>
                                 <td>{{ $pinjam->buku->judul }}</td>
                                 <td>{{ $pinjam->buku->penulis }}</td>
-                                <td>{{ $pinjam->tanggal_pinjam }}</td>
-                                <td>{{ $pinjam->batas_pengembalian }}</td>
+                                <td>{{ $pinjam->tanggal_pinjam->format('d/M/Y')}}</td>
+                                <td>{{ $pinjam->batas_pengembalian->format('d/M/Y')}}</td>
                                 <td>
                                     <div class="d-flex centerButton">
 

@@ -44,40 +44,44 @@
 
                     {{-- All Genre dengan input search di dalamnya --}}
                     <div id="all-genre" data-tab-content class="active">
-                        <div class="row mb-3" id="search-wrapper">
-                            <div class="col-md-4 mx-auto">
-                                <input type="text" id="search-input" class="form-control" placeholder="Cari judul atau penulis...">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            @foreach ($all as $buku)
-                            <div class="col-lg-2 mb-1 book-item"
-                                data-judul="{{ strtolower($buku->judul) }}"
-                                data-penulis="{{ strtolower($buku->penulis) }}">
-                                <div class="product-item text-center shadow-sm rounded p-2 bg-white h-60 book-card">
-                                    <figure class="product-style mb-1">
-                                        <img src="{{ asset('storage/covers/'.$buku->cover) }}" alt="{{ $buku->judul }}"
-                                            class="img-fluid rounded"
-                                            style="width: 100%; aspect-ratio: 2/3; object-fit: cover;">
-                                    </figure>
-                                    <figcaption style="margin-bottom: 1px;">
-                                        <h6 class="mb-0" style="font-size: 0.8rem;">{{ $buku->judul }}</h6>
-                                        <small class="text-muted" style="font-size: 0.7rem;">{{ $buku->penulis }}</small>
-                                        <div class="mt-1">
-                                            <small class="text-muted" style="font-size: 0.7rem;">Stok: {{ $buku->stok_buku }}</small>
-                                        </div>
-                                    </figcaption>
-                                    <form action="{{ route('detail', $buku->id) }}" method="get">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm custom-btn-outline-primary w-80 h-50" style="font-size: 0.7rem;">
-                                            Lihat Detail
-                                        </button>
-                                    </form>
+                        <form action="/buku/cari" method="GET">
+                            <div class="row mb-3" id="search-wrapper">
+                                <div class="col-md-4 mx-auto">
+                                    <input type="text" id="search-input" class="form-control" placeholder="Cari judul atau penulis..." value="{{$cari ?? ''}}" name="cari">
                                 </div>
                             </div>
+                        </form>
+                        @if (!$all ->isEmpty())
+                            <div class="row">
+                                @foreach ($all as $buku)
+                                <div class="col-lg-2 mb-1 book-item">
+                                    <div class="product-item text-center shadow-sm rounded p-2 bg-white h-60 book-card">
+                                        <figure class="product-style mb-1">
+                                            <img src="{{ asset('storage/covers/'.$buku->cover) }}" alt="{{ $buku->judul }}"
+                                                class="img-fluid rounded"
+                                                style="width: 100%; aspect-ratio: 2/3; object-fit: cover;">
+                                        </figure>
+                                        <figcaption style="margin-bottom: 1px;">
+                                            <h6 class="mb-0" style="font-size: 0.8rem;">{{ $buku->judul }}</h6>
+                                            <small class="text-muted" style="font-size: 0.7rem;">{{ $buku->penulis }}</small>
+                                            <div class="mt-1">
+                                                <small class="text-muted" style="font-size: 0.7rem;">Stok: {{ $buku->stok_buku }}</small>
+                                            </div>
+                                        </figcaption>
+                                        <form action="{{ route('detail', $buku->id) }}" method="get">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm custom-btn-outline-primary w-80 h-50" style="font-size: 0.7rem;">
+                                                Lihat Detail
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             @endforeach
                         </div>
+                        @else
+                            <h3 class="text-center">Buku tidak di temukan</h3>
+                        @endif
+                        
                     </div>
 
                     {{-- Genre tabs --}}
@@ -85,9 +89,7 @@
                     <div id="{{ $namaGenre }}" data-tab-content>
                         <div class="row">
                             @foreach ($daftarBuku as $buku)
-                            <div class="col-lg-2 mb-1 book-item"
-                                data-title="{{ strtolower($buku->judul) }}"
-                                data-author="{{ strtolower($buku->penulis) }}">
+                            <div class="col-lg-2 mb-1 book-item">
                                 <div class="product-item text-center shadow-sm rounded p-2 bg-white h-60 book-card">
                                     <figure class="product-style mb-1">
                                         <img src="{{ asset('storage/covers/'.$buku->cover) }}" alt="{{ $buku->judul }}"
@@ -120,31 +122,5 @@
     </div>
 </section>
 
-<script>
-   document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('search-input');
-
-    // pencarian, jika input ada
-    if (searchInput) {
-        searchInput.addEventListener('input', function () {
-            const keyword = this.value.toLowerCase();
-            const allGenreTab = document.getElementById('all-genre');
-            const books = allGenreTab.querySelectorAll('.book-item');
-
-            books.forEach(book => {
-                const title = book.getAttribute('data-judul');
-                const author = book.getAttribute('data-penulis');
-
-                if (title.includes(keyword) || author.includes(keyword)) {
-                    book.classList.remove('hidden');
-                } else {
-                    book.classList.add('hidden');
-                }
-            });
-        });
-    }
-});
-
-</script>
 
 @endsection

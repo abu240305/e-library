@@ -42,7 +42,7 @@
                                     {{ \Carbon\Carbon::parse($review->tanggal_ulasan)->format('d-m-Y') }}
                                 </small>
                             @else
-                                <a href="{{ route('ulasan-buku.tambah', $buku->id) }}" class="btn custom-btn-outline-primary mt-2">
+                                <a href="{{ route('ulasan-buku.tambah', $buku->id) }}" class="btn custom-btn-outline-primary mt-2" style="justify-content: center">
                                     Tulis Ulasan
                                 </a>
                             @endif

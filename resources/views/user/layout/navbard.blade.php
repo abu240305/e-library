@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row align-items-center py-2">
             <div class="col-6 col-md-2 text-center text-md-start">
-                <a href="/home">
+                <a href="/">
                     <img src="{{ asset('assetUser/images/logo1.png') }}" alt="logo" class="img-fluid" style="max-width: 60%;">
                 </a>
             </div>
@@ -16,7 +16,7 @@
 
                     <div class="main-menu stellarnav">
                         <ul class="menu-list">
-                            <li class="nav-item"><a href="/home" class="nav-link">Home</a></li>
+                            <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
 
                             @if(auth()->check())
                                 {{-- User sudah login --}}

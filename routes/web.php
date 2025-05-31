@@ -26,8 +26,10 @@ Route::get('/login',[AuthController::class,'index'])->name('login');
 Route::post('/prosesLogin',[AuthController::class,'prosesLogin']);
 Route::get('/logout',[AuthController::class,'logout']);
 
+
+
 // ADMIN ROUTE GROUP
-Route::group(['middleware' => ['auth', 'cek_login:admin']], function () {
+Route::group(['middleware' => ['cek_login:admin']], function () {
     Route::get('/admin/dashboard', [AdminController::class,'index']);
     Route::get('/buku/{hashedId}/lihat', [AdminController::class, 'lihatBuku'])->name('buku.lihat');
     Route::get('/admin/buku', [AdminController::class,'buku']);
@@ -46,7 +48,7 @@ Route::group(['middleware' => ['auth', 'cek_login:admin']], function () {
 });
 
 // USER ROUTE GROUP
-Route::group(['middleware' => ['auth', 'cek_login:user']], function () {
+Route::group(['middleware' => ['cek_login:user']], function () {
     
     Route::get('/peminjaman/daftar', [UserController::class, 'daftarBukuDipinjam'])->name('peminjaman.daftar');
     Route::post('/peminjaman/{bukuId}',[UserController::class,'peminjaman'])->name('peminjaman');
@@ -57,16 +59,11 @@ Route::group(['middleware' => ['auth', 'cek_login:user']], function () {
     Route::get('ulasan-buku/tambah/{buku_id}', [UserController::class, 'tambahUlasan'])->name('ulasan-buku.tambah');
     Route::post('ulasan-buku/proses', [UserController::class, 'prosesUlasan'])->name('ulasan-buku.proses');
     Route::get('/buku/{hashedId}/baca', [UserController::class, 'baca'])->name('baca');
+    Route::get('/buku/cari', [UserController::class, 'cari'])->name('cari');
+
 
 });
 Route::get('/',[UserController::class,'index']);
 Route::get('/detail/{id}',[UserController::class,'detail'])->name('detail');
-// Route::get('/cek-imagick', function () {
-//     return extension_loaded('imagick') ? 'Imagick aktif!' : 'Imagick TIDAK aktif!';
-// });
 
-// Route::get('/test-auto-return', function () {
-//     Artisan::call('app:auto-pengembalian');
-//     return 'Auto pengembalian dijalankan.';
-// });
 

@@ -17,13 +17,13 @@ class UserController extends Controller
     public function index(){
         $all = Buku::all();
 
-    $genres = [
-        'novel' => Buku::where('kategori', 'novel')->get(),
-        'ilmia' => Buku::where('kategori', 'ilmia')->get(),
-        'sejarah' => Buku::where('kategori', 'sejarah')->get(),
-        'edukasi' => Buku::where('kategori', 'edukasi')->get(),
-        'fiksi' => Buku::where('kategori', 'fiksi')->get(),
-    ];
+        $genres = [
+            'novel' => Buku::where('kategori', 'novel')->get(),
+            'ilmia' => Buku::where('kategori', 'ilmia')->get(),
+            'sejarah' => Buku::where('kategori', 'sejarah')->get(),
+            'edukasi' => Buku::where('kategori', 'edukasi')->get(),
+            'fiksi' => Buku::where('kategori', 'fiksi')->get(),
+        ];
 
         return view('user.home.index', compact('all', 'genres'));
     }
@@ -35,10 +35,6 @@ class UserController extends Controller
     }
 
     public function peminjaman($bukuId){
-        if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
-        }
-    
         $userId = Auth::id();
         $buku = Buku::findOrFail($bukuId);
     
@@ -76,7 +72,7 @@ class UserController extends Controller
     {
         // Ambil peminjaman yang belum dikembalikan
         $peminjaman = Peminjaman::where('user_id', Auth::id())
-            ->whereDoesntHave('pengembalian')  // Pastikan belum ada pengembalian
+            ->whereDoesntHave('pengembalian') //yang belum ada relasinya
             ->with('buku')  // relasi buku
             ->get();
     
@@ -86,8 +82,7 @@ class UserController extends Controller
 
     public function kembalikanBuku($id){
         $peminjaman = Peminjaman::where('id', $id)
-            ->where('user_id', Auth::id())  // Memastikan milik user yang login
-            ->whereDoesntHave('pengembalian')  // Pastikan belum ada pengembalian
+            ->where('user_id', Auth::id())
             ->firstOrFail();
 
         // Kembalikan stok buku
@@ -95,7 +90,7 @@ class UserController extends Controller
 
         Pengembalian::create([
             'peminjaman_id' => $peminjaman->id,
-            'user_id' => Auth::id(),  // Pastikan user_id diisi
+            'user_id' => Auth::id(),
             'tanggal_kembali' => now(),
         ]);
 
@@ -103,28 +98,23 @@ class UserController extends Controller
     }
 
     public function pengembalian(){
-        $pengembalian = Pengembalian::where('user_id', Auth::id())
-            ->with('peminjaman.buku')
-            ->get();
-    
+        $pengembalian = Pengembalian::where('user_id', Auth::id())->with('peminjaman.buku')->get();
+        foreach ($pengembalian as $x=>$baco) 
+            $pengembalian[$x]->tanggal_kembali=date('d-M-Y', strtotime($baco->tanggal_kembali));
         return view('user.pengembalian.index', compact('pengembalian'));
     }
 
-     // ulasan
+
     public function ulasan(){
         $userId = Auth::id();
 
         // Ambil data pengembalian user, termasuk relasi peminjaman dan bukunya
         $pengembalian = Pengembalian::with('peminjaman.buku')
-            ->whereHas('peminjaman', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-            ->get();
+        ->whereHas('peminjaman', function ($query) use ($userId) {$query->where('user_id', $userId);})
+        ->get();
 
         // Ambil buku dari relasi, pastikan tidak duplikat
-        $bukuUnik = $pengembalian->map(function ($item) {
-            return $item->peminjaman->buku;
-        })->unique('id');
+        $bukuUnik = $pengembalian->map(function ($item) {return $item->peminjaman->buku;})->unique('id');
 
         // Ambil ulasan user berdasarkan buku yang pernah diulas
         $ulasan = Ulasan::where('user_id', $userId)->get()->keyBy('buku_id');
@@ -159,6 +149,19 @@ class UserController extends Controller
         // dd(Hashids::decode($hashedId)); 
         $itembuku = Buku::where('id', $idBuku)->first(); 
         return view('user.buku.index', compact('itembuku'));
+    }
+
+    public function cari(Request $request){
+        $cari = $request->cari;
+        $genres = [
+            'novel' => Buku::where('kategori', 'novel')->get(),
+            'ilmia' => Buku::where('kategori', 'ilmia')->get(),
+            'sejarah' => Buku::where('kategori', 'sejarah')->get(),
+            'edukasi' => Buku::where('kategori', 'edukasi')->get(),
+            'fiksi' => Buku::where('kategori', 'fiksi')->get(),
+        ];
+        $all = Buku::where('judul','LIKE',"%$cari%")->orWhere('penulis','LIKE',"%$cari%")->get();
+        return view('user.home.index', compact('all','cari', 'genres'));
     }
 
 }

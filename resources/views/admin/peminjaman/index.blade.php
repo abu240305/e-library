@@ -63,10 +63,10 @@
                             <p class="mb-0 fw-normal">{{$peminjaman->buku->penulis ?? '-'}}</p>
                           </td>
                           <td class="border-bottom-0">
-                            <p class="mb-0 fw-normal">{{$peminjaman->tanggal_pinjam}}</p>
+                            <p class="mb-0 fw-normal">{{$peminjaman->tanggal_pinjam->format('d/M/Y')}}</p>
                           </td>
                           <td class="border-bottom-0">
-                            <p class="mb-0 fw-normal">{{$peminjaman->batas_pengembalian}}</p>
+                            <p class="mb-0 fw-normal">{{$peminjaman->batas_pengembalian->format('d/M/Y')}}</p>
                           </td>
                         </tr>
                           @endforeach             

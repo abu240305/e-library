@@ -13,7 +13,7 @@ class AutoPengembalian extends Command
 
     public function handle()
     {
-        $peminjamans = Peminjaman::where('batas_pengembalian', '<=', now())
+        $peminjamans = Peminjaman::whereColumn('batas_pengembalian', '<=', 'tanggal_pinjam')
             ->whereDoesntHave('pengembalian')
             ->with('buku')
             ->get();

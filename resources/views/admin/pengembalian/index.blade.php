@@ -53,14 +53,14 @@
                                 <span class="fw-normal">{{$pengembalian->user->nama}}</span>                          
                             </td>
                             <td class="border-bottom-0">
-                              <p class="mb-0 fw-normal">{{$pengembalian->buku->judul ??'-'}}</p>
+                              <p class="mb-0 fw-normal">{{$pengembalian->peminjaman->buku->judul ??'-'}}</p>
                             </td>
                             <td class="border-bottom-0">
-                              <p class="mb-0 fw-normal">{{$pengembalian->buku->penulis ?? '-'}}</p>
+                              <p class="mb-0 fw-normal">{{$pengembalian->peminjaman->buku->penulis ?? '-'}}</p>
                             </td>
                             <td class="border-bottom-0">
                               <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-success rounded-3 fw-semibold">{{$pengembalian->tanggal_kembali}}<span>
+                                <span class="badge bg-success rounded-3 fw-semibold">{{$pengembalian->tanggal_kembali->format('d/M/Y')}}<span>
                               </div>
                             </td>
                           </tr>

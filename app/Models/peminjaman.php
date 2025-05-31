@@ -30,6 +30,11 @@ class Peminjaman extends Model
         return $this->hasOne(Pengembalian::class);
     }
 
+    protected $casts = [
+    'tanggal_pinjam' => 'date',
+    'batas_pengembalian' => 'date',
+    ];
+
 
 
 }
