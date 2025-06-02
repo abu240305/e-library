@@ -24,7 +24,7 @@ Route::get('/register',[AuthController::class,'register'])->name('register');
 Route::post('/prosesRegister',[AuthController::class,'prosesRegister']);
 Route::get('/login',[AuthController::class,'index'])->name('login');
 Route::post('/prosesLogin',[AuthController::class,'prosesLogin']);
-Route::get('/logout',[AuthController::class,'logout']);
+Route::get('/logout',[AuthController::class,'logout'])->name('logout');
 
 
 
@@ -60,6 +60,7 @@ Route::group(['middleware' => ['cek_login:user']], function () {
     Route::post('ulasan-buku/proses', [UserController::class, 'prosesUlasan'])->name('ulasan-buku.proses');
     Route::get('/buku/{hashedId}/baca', [UserController::class, 'baca'])->name('baca');
     Route::get('/buku/cari', [UserController::class, 'cari'])->name('cari');
+    Route::get('/buku/cari/pengembalian', [UserController::class, 'cari_pengembalian'])->name('cari.pengembalian');
 
 
 });

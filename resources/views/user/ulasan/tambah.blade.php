@@ -5,10 +5,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-lg border-0">
-                <div class="card-header text-white text-center" style="background: linear-gradient(90deg, #013220, #025e20);">
+                <div class="card-header text-white text-center" style="background: linear-gradient(90deg, #dbd19d, #f3ffcd);">
                     <h4 class="fw-bold">Berikan Ulasan Anda</h4>
                 </div>
-                <div class="card-body" style="background-color: #e6f2e6;">
+                <div class="card-body" style="background-color: #f3f1de;">
                     <form action="{{ route('ulasan-buku.proses') }}" method="POST">
                         @csrf
                         <input type="hidden" name="buku_id" value="{{ $buku->id }}">
@@ -32,7 +32,7 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-gradient btn-lg text-white" style="background: linear-gradient(90deg, #013220, #025e20);">Kirim Ulasan</button>
+                            <button type="submit" class="btn custom-btn-outline-primary m-1">Kirim Ulasan</button>
                         </div>
                     </form>
                 </div>

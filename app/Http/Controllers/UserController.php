@@ -62,15 +62,13 @@ class UserController extends Controller
             'batas_pengembalian' => now()->addDays(7),
         ]);
     
-        return redirect()->route('peminjaman.daftar', ['id' => $buku->id])
-                        ->with('success', 'Buku berhasil dipinjam!');
+        return redirect()->route('peminjaman.daftar', ['id' => $buku->id])->with('success', 'Buku berhasil dipinjam!');
     }
     
 
     
     public function daftarBukuDipinjam()
     {
-        // Ambil peminjaman yang belum dikembalikan
         $peminjaman = Peminjaman::where('user_id', Auth::id())
             ->whereDoesntHave('pengembalian') //yang belum ada relasinya
             ->with('buku')  // relasi buku
@@ -81,9 +79,7 @@ class UserController extends Controller
     
 
     public function kembalikanBuku($id){
-        $peminjaman = Peminjaman::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
+        $peminjaman = Peminjaman::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
         // Kembalikan stok buku
         $peminjaman->buku->increment('stok_buku');
@@ -98,7 +94,7 @@ class UserController extends Controller
     }
 
     public function pengembalian(){
-        $pengembalian = Pengembalian::where('user_id', Auth::id())->with('peminjaman.buku')->get();
+        $pengembalian = Pengembalian::where('user_id', Auth::id())->get();
         foreach ($pengembalian as $x=>$baco) 
             $pengembalian[$x]->tanggal_kembali=date('d-M-Y', strtotime($baco->tanggal_kembali));
         return view('user.pengembalian.index', compact('pengembalian'));
@@ -164,5 +160,15 @@ class UserController extends Controller
         return view('user.home.index', compact('all','cari', 'genres'));
     }
 
+    public function cari_pengembalian (Request $request){
+        $cari = $request->cari;
+        $pengembalian = Pengembalian::whereHas('peminjaman.buku', function ($query) use ($cari) {
+        $query->where('judul', 'LIKE', "%$cari%")->orWhere('penulis', 'LIKE', "%$cari%");})
+        ->where('user_id', Auth::id())
+        ->get();
+        foreach ($pengembalian as $x=>$baco) 
+            $pengembalian[$x]->tanggal_kembali=date('d-M-Y', strtotime($baco->tanggal_kembali));
+        return view('user.pengembalian.index', compact('pengembalian'));
+    }
 }
 
